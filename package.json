@@ -1,0 +1,15 @@
+{
+  "name": "remax-followup-server",
+  "version": "1.0.0",
+  "description": "REMAX Followup Server",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "axios": "^1.11.0",
+    "express": "^4.21.2",
+    "ioredis": "^5.7.0",
+    "node-cron": "^4.2.1"
+  }
+}
