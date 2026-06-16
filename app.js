@@ -3,6 +3,7 @@ const path = require("path");
 
 const Redis = require("ioredis");
 const cron = require("node-cron");
+const axios = require("axios");
 
 const indexRouter = require("./routes/index");
 
@@ -189,12 +190,29 @@ cron.schedule("* * * * *", async () => {
         "FOLLOWUP:",
         data.entity_id
       );
-
-      /*
-       * AQUÍ DESPUÉS
-       * LLAMAREMOS A N8N O KOMMO
-       */
-
+      
+      const kommoResponse = await axios.post(
+        `${process.env.KOMMO_BASE_URL}/api/v2/salesbot/run`,
+        [
+          {
+            bot_id: Number(process.env.FOLLOWUP_BOT_ID),
+            entity_id: Number(data.entity_id),
+            entity_type: 2
+          }
+        ],
+        {
+          headers: {
+            accept: "application/json",
+            authorization: `Bearer ${process.env.KOMMO_TOKEN}`
+          }
+        }
+      );
+      
+      console.log(
+        "KOMMO FOLLOWUP OK:",
+        kommoResponse.data
+      );
+      
       data.followup_sent = true;
 
       data.followup_sent_at = now;
