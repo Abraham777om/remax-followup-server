@@ -56,18 +56,19 @@ app.post("/followup/activity", async (req, res) => {
     const existingRaw = await redis.get(key);
     const existing = existingRaw ? JSON.parse(existingRaw) : null;
 
-    const incomingTime = Date.now();
+    const incomingTime = Number(last_message_at || Date.now());
     const existingTime = Number(existing?.last_message_at || 0);
 
-    // Evita que un evento viejo sobrescriba uno más nuevo
     if (existing && incomingTime < existingTime) {
       return res.json({
         ok: true,
         ignored: true,
         reason: "older_event",
-        existing
+        key,
+        existing,
+        received: req.body
       });
-    }
+    };
 
     const data = {
       entity_id,
@@ -106,6 +107,7 @@ app.post("/followup/activity", async (req, res) => {
     res.json({
       ok: true,
       key,
+      received: req.body,
       data
     });
 
