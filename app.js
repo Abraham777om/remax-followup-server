@@ -94,7 +94,7 @@ app.post("/followup/activity", async (req, res) => {
       followup_message:
         followup_message ||
         existing?.followup_message ||
-        "Hola, solo quería darle seguimiento. ¿La propiedad sigue siendo de su interés?"
+        "Hola, ¿cómo puedo ayudarle? ¿La propiedad sigue siendo de su interés o hay alguna duda que pueda ayudarle a resolver?"
     };
 
     await redis.set(
