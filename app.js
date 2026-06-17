@@ -53,31 +53,46 @@ app.post("/followup/activity", async (req, res) => {
 
     const key = `followup:${entity_id}`;
 
-    const data = {
+    const existingRaw = await redis.get(key);
+    const existing = existingRaw ? JSON.parse(existingRaw) : null;
 
+    const incomingTime = Number(last_message_at || Date.now());
+    const existingTime = Number(existing?.last_message_at || 0);
+
+    // Evita que un evento viejo sobrescriba uno más nuevo
+    if (existing && incomingTime < existingTime) {
+      return res.json({
+        ok: true,
+        ignored: true,
+        reason: "older_event",
+        existing
+      });
+    }
+
+    const data = {
       entity_id,
 
       contact_id:
-        contact_id || null,
+        contact_id || existing?.contact_id || null,
 
       property_id:
-        property_id || null,
+        property_id || existing?.property_id || null,
 
       last_role,
 
-      last_message_at:
-        Number(last_message_at || Date.now()),
+      last_message_at: incomingTime,
 
       followup_enabled:
-        followup_enabled ?? true,
+        followup_enabled ?? existing?.followup_enabled ?? true,
 
       followup_reason:
-        followup_reason || null,
+        followup_reason || existing?.followup_reason || null,
 
       followup_sent: false,
 
       followup_message:
         followup_message ||
+        existing?.followup_message ||
         "Hola, solo quería darle seguimiento. ¿La propiedad sigue siendo de su interés?"
     };
 
