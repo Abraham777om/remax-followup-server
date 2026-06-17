@@ -104,7 +104,9 @@ app.post("/followup/activity", async (req, res) => {
     );
 
     res.json({
-      ok: true
+      ok: true,
+      key,
+      data
     });
 
   } catch (error) {
