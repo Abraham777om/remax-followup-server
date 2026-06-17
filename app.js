@@ -56,7 +56,7 @@ app.post("/followup/activity", async (req, res) => {
     const existingRaw = await redis.get(key);
     const existing = existingRaw ? JSON.parse(existingRaw) : null;
 
-    const incomingTime = Number(last_message_at || Date.now());
+    const incomingTime = Date.now();
     const existingTime = Number(existing?.last_message_at || 0);
 
     // Evita que un evento viejo sobrescriba uno más nuevo
