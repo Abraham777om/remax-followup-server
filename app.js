@@ -19,7 +19,7 @@ app.use("/", indexRouter);
 
 const redis = new Redis(process.env.REDIS_URL);
 
-const THIRTY_MIN = 60 * 1000;
+const THIRTY_MIN = 30 * 60 * 1000;
 
 /*
 |--------------------------------------------------------------------------
